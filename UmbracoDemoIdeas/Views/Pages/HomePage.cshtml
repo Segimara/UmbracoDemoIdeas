@@ -1,1 +1,8 @@
-﻿Some test content
+﻿@model HomePage
+
+@foreach (var item in Model.TestImages)
+{
+    <div>
+        <img src="@item..Url" alt="@item.Name" />
+    </div>
+}
