@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Umbraco.Cms.Core.Models;
-using Umbraco.Cms.Core.Models.PublishedContent;
+﻿using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Web.Common.PublishedModels;
 using Umbraco.Extensions;
@@ -43,7 +37,12 @@ internal class UmbracoContentProvider
     private IUmbracoContext GetUmbracoContext()
     {
         _umbracoContentAccessor.TryGetUmbracoContext(out var umbracoContext);
- 
+
         return umbracoContext;
+    }
+
+    public IPublishedContent? GetById(string id)
+    {
+        return GetUmbracoContext()?.Content?.GetById(int.Parse(id));
     }
 }
