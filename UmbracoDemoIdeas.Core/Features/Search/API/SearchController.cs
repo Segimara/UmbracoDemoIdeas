@@ -1,17 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Umbraco.Cms.Web.Common.Controllers;
+using UmbracoDemoIdeas.Core.Features.Common.Attribute;
 using UmbracoDemoIdeas.Core.Features.Search.SearchableContentIndex.Queries.ProductFilterQuery;
 
 namespace UmbracoDemoIdeas.Core.Features.Search.API;
-internal class UmbracoAPIAttribute : RouteAttribute
-{
-    public UmbracoAPIAttribute() : base("umbraco/api/[controller]/[action]") { }
-}
 
-
-[UmbracoAPI]
-public class SearchController : UmbracoApiController
+[ApiController]
+[UmbracoAPIController]
+[ApiExplorerSettings(GroupName = "Search")]
+public class SearchController : Controller
 {
     private readonly ISearchService _searchService;
 
@@ -20,6 +17,8 @@ public class SearchController : UmbracoApiController
         _searchService = searchService;
     }
 
+    [HttpGet]
+    [UmbracoAPIAction]
     public IActionResult Search([FromQuery, BindRequired] ProductFilterSearchTerm searchTerm)
     {
         var vm = _searchService.Search(searchTerm);

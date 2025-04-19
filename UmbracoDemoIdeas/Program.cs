@@ -1,4 +1,6 @@
-using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authorization;
+using Umbraco.Commerce.Extensions;
+using UmbracoDemoIdeas.Configuration;
 using UmbracoDemoIdeas.Core;
 
 internal class Program
@@ -8,25 +10,21 @@ internal class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.CreateUmbracoBuilder()
+            .AddUmbracoCommerce()
             .AddBackOffice()
             .AddWebsite()
-            .AddDeliveryApi()
             .RegisterCore()
             .AddComposers()
-            .Build();
+            .AddOurSwagger().Build();
 
-        builder.Services.AddSwaggerGen(c =>
-        {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
-        });
+
+        builder.Services.AddControllers();
 
         var app = builder.Build();
 
         await app.BootUmbracoAsync();
-
-        app.UseSwagger();
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API v1"));
-
+        app.UseOurSwagger();
+        app.MapControllers().WithMetadata(new AllowAnonymousAttribute());
         app.UseHttpsRedirection()
             .UseUmbraco()
             .WithMiddleware(u =>

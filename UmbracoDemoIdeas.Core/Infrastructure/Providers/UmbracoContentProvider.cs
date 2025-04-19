@@ -1,28 +1,49 @@
 ﻿using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Web.Common.PublishedModels;
+using Umbraco.Commerce.Core.Models;
 using Umbraco.Extensions;
 using UmbracoDemoIdeas.Core.Infrastructure.Extentions;
 
 namespace UmbracoDemoIdeas.Core.Infrastructure.Providers;
-internal class UmbracoContentProvider
+public class UmbracoContentProvider(IUmbracoContextAccessor _umbracoContentAccessor)
 {
-    private readonly IUmbracoContextAccessor _umbracoContentAccessor;
-
-    public UmbracoContentProvider(IUmbracoContextAccessor umbracoContentAccessor)
-    {
-        _umbracoContentAccessor = umbracoContentAccessor;
-    }
-
     public HomePage HomePage()
     {
         return (HomePage)GetRootNode()!;
     }
-
+    public StoreReadOnly GetDefaultStore()
+    {
+        var store = HomePage().Store!;
+        return store;
+    }
     public IEnumerable<CategoryPage>? CategoryPages()
     {
-        return GetRootNode()?.GetPagesOfType<CategoryPage>();
+        return GetRootNode()
+            ?.FirstChild<CategoriesFolder>()
+            ?.Children<CategoryPage>();
     }
+
+    public IEnumerable<ProductPage>? ProductPages()
+    {
+        return GetRootNode()
+            ?.FirstChild<ProductsFolder>()
+            ?.Children<ProductPage>();
+    }
+    public IEnumerable<ProductPage>? ProductPages(Guid? categoryKey)
+    {
+        return GetRootNode()
+            ?.FirstChild<ProductsFolder>()
+            ?.Children<ProductPage>()
+            .EmptyIfNull()
+            .Where(p => categoryKey is null || p.Category?.Key == categoryKey);
+    }
+    public IEnumerable<ProductPage>? ProductPages(CategoryPage category)
+    {
+        return ProductPages(category.Key);
+    }
+
+
 
     public IPublishedContent? GetRootNode()
     {
