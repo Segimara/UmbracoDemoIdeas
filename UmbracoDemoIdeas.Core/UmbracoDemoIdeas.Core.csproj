@@ -23,8 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Features\Cart\Facade\" />
-    <Folder Include="Features\Cart\Service\" />
     <Folder Include="Features\Category\Service\" />
     <Folder Include="Features\Product\Service\" />
   </ItemGroup>

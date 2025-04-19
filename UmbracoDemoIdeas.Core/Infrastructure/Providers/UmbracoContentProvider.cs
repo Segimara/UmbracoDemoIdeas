@@ -2,11 +2,12 @@
 using Umbraco.Cms.Core.Web;
 using Umbraco.Cms.Web.Common.PublishedModels;
 using Umbraco.Commerce.Core.Models;
+using Umbraco.Commerce.Core.Services;
 using Umbraco.Extensions;
 using UmbracoDemoIdeas.Core.Infrastructure.Extentions;
 
 namespace UmbracoDemoIdeas.Core.Infrastructure.Providers;
-public class UmbracoContentProvider(IUmbracoContextAccessor _umbracoContentAccessor)
+public class UmbracoContentProvider(IUmbracoContextAccessor _umbracoContentAccessor, IProductService productService)
 {
     public HomePage HomePage()
     {
@@ -65,5 +66,26 @@ public class UmbracoContentProvider(IUmbracoContextAccessor _umbracoContentAcces
     public IPublishedContent? GetById(string id)
     {
         return GetUmbracoContext()?.Content?.GetById(int.Parse(id));
+    }
+    public IPublishedContent? GetByKey(Guid key)
+    {
+        return GetUmbracoContext()?.Content?.GetById(key);
+    }
+
+    public ProductPage? GetProductById(Guid productId)
+    {
+        return GetByKey(productId) as ProductPage;
+    }
+
+    public IProductSnapshot? GetProductSnapshot(ProductPage product)
+    {
+        var store = GetDefaultStore();
+
+        if (store == null)
+        {
+            return null;
+        }
+
+        return productService.GetProduct(store.Id, product.Key.ToString(), Thread.CurrentThread.CurrentCulture.Name);
     }
 }

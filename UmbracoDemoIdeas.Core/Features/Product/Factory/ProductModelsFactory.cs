@@ -1,18 +1,18 @@
 ﻿using Umbraco.Cms.Web.Common.PublishedModels;
 using UmbracoDemoIdeas.Core.Features.Common.Factory;
 using UmbracoDemoIdeas.Core.Infrastructure.Extentions;
-using UmbracoDemoIdeas.Core.Infrastructure.Helpers;
+using UmbracoDemoIdeas.Core.Infrastructure.Providers;
 
 namespace UmbracoDemoIdeas.Core.Features.Product.Factory;
 public class ProductModelsFactory(CommerceFactory commerceFactory,
-    ProductSnapshotHelper productSnapshotHelper)
+    UmbracoContentProvider umbracoContentProvider)
 {
     internal IEnumerable<ProductResponseModel> CreateProductModels(IEnumerable<ProductPage>? products)
     {
 
         return products?.Select(x =>
         {
-            var productSnapshot = productSnapshotHelper.GetProductSnapshot(x);
+            var productSnapshot = umbracoContentProvider.GetProductSnapshot(x);
             return new ProductResponseModel
             {
                 Id = x.Key,
